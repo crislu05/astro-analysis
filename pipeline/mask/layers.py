@@ -15,7 +15,6 @@ class MaskLayers:
     saturated: np.ndarray = field(init=False)
     bleed: np.ndarray = field(init=False)
     halo: np.ndarray = field(init=False)
-    streak: np.ndarray = field(init=False)
 
     def __post_init__(self) -> None:
         for name in LAYER_NAMES:

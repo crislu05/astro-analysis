@@ -16,7 +16,7 @@ from pipeline.mask.config import LAYER_NAMES
 from pipeline.mask.sky import fit_sky_histogram, gauss
 from pipeline.mask.state import MaskState
 
-LAYER_CMAP = ["#999999", "#e41a1c", "#377eb8", "#4daf4a", "#ff7f00"]
+LAYER_CMAP = ["#999999", "#e41a1c", "#377eb8", "#4daf4a"]
 
 DEFAULT_ZOOMS = {
     "central star": (1435, 3200, 450),
@@ -71,7 +71,7 @@ def save_inspection_plots(
         np.ma.masked_where(layer_map == 0, layer_map),
         cmap=cm,
         vmin=0.5,
-        vmax=5.5,
+        vmax=4.5,
         origin="lower",
         alpha=0.55,
     )

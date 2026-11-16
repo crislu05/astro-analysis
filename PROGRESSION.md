@@ -20,6 +20,10 @@
 
 - Restored entrypoints: `mask.py` and `python -m pipeline.mask` (`pipeline/mask/cli.py`).
 
+## 2026-11-16 (no streak layer)
+
+- Removed streak detection/masking (`streak.py`), `streak` layer, and scikit-image dependency.
+
 ## 2026-11-16 (mask plots)
 
 - Added `paths.MASK_PLOT_DIR` (`result/mask`); `save_inspection_plots` defaults there when `outdir` is omitted.

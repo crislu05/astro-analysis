@@ -8,9 +8,6 @@ from pipeline.mask.bleed import BleedRecord
 from pipeline.mask.halo import StarMask
 from pipeline.mask.layers import MaskLayers
 from pipeline.mask.saturated import SaturatedResult
-from pipeline.mask.streak import StreakLine
-
-
 @dataclass
 class MaskState:
     data: np.ndarray
@@ -23,7 +20,6 @@ class MaskState:
     saturated: SaturatedResult | None = None
     bleeds: list[BleedRecord] = field(default_factory=list)
     stars: list[StarMask] = field(default_factory=list)
-    streaks: list[StreakLine] = field(default_factory=list)
 
     @property
     def mask(self) -> np.ndarray:

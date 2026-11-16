@@ -11,7 +11,6 @@ from pipeline.mask.halo import apply_halos
 from pipeline.mask.layers import MaskLayers
 from pipeline.mask.saturated import detect_saturated
 from pipeline.mask.sky import fit_sky
-from pipeline.mask.streak import apply_streaks
 from pipeline.mask.state import MaskState
 
 
@@ -33,7 +32,6 @@ def build_mask_state(data: np.ndarray, header: Header) -> MaskState:
     state.stars = apply_halos(
         data, xx, yy, layers, state.saturated, saturation, state.sigma
     )
-    state.streaks = apply_streaks(data, layers, xx, yy, state.sigma)
     return state
 
 

@@ -29,7 +29,6 @@ def write_summary(state: MaskState, mosaic: Path, outdir: Path) -> Path:
         },
         "n_bleeds": len(state.bleeds),
         "n_stars": len(state.stars),
-        "n_streaks": len(state.streaks),
     }
     path = outdir / "summary.json"
     path.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
