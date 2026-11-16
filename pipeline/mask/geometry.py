@@ -6,7 +6,7 @@ import numpy as np
 def pixel_grid(shape: tuple[int, int]) -> tuple[np.ndarray, np.ndarray]:
     ny, nx = shape
     yy, xx = np.mgrid[0:ny, 0:nx]
-    return yy, xx
+    return xx, yy
 
 
 def mask_circle(

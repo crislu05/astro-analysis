@@ -10,6 +10,8 @@ import numpy as np
 from astropy.visualization import ZScaleInterval
 from matplotlib.patches import Patch
 
+from paths import MASK_PLOT_DIR
+
 from pipeline.mask.config import LAYER_NAMES
 from pipeline.mask.sky import fit_sky_histogram, gauss
 from pipeline.mask.state import MaskState
@@ -35,11 +37,11 @@ def _layer_index_map(state: MaskState) -> np.ndarray:
 
 def save_inspection_plots(
     state: MaskState,
-    outdir: str | Path,
+    outdir: str | Path | None = None,
     zooms: dict[str, tuple[int, int, int]] | None = None,
-) -> None:
-    """Write overlay, layer, zoom, and sky-histogram figures."""
-    outdir = Path(outdir)
+) -> Path:
+    """Write overlay, layer, zoom, and sky-histogram figures under ``result/mask`` by default."""
+    outdir = MASK_PLOT_DIR if outdir is None else Path(outdir)
     outdir.mkdir(parents=True, exist_ok=True)
     data = state.data
     mask = state.mask
@@ -133,3 +135,4 @@ def save_inspection_plots(
     plt.tight_layout()
     plt.savefig(outdir / "good_pixel_histogram.png", dpi=100)
     plt.close()
+    return outdir
