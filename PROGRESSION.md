@@ -7,4 +7,4 @@
 - Fixed `halo_radius` missing `sigma` argument after refactor.
 - Added `scipy` and `scikit-image` to `requirements.txt`; fixed CLI `summary.json` numpy int serialization.
 - Added `pipeline/mask/plots.py`; CLI writes `mask_overlay.png`, `mask_layers.png`, `mask_zooms.png`, and `good_pixel_histogram.png`.
-- Added `.gitignore` with `result/`.
+- Added `.gitignore` with `result/` and `data/`.
