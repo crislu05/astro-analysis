@@ -8,6 +8,8 @@ from pipeline.mask.bleed import BleedRecord
 from pipeline.mask.halo import StarMask
 from pipeline.mask.layers import MaskLayers
 from pipeline.mask.saturated import SaturatedResult
+
+
 @dataclass
 class MaskState:
     data: np.ndarray

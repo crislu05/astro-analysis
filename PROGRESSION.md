@@ -27,3 +27,16 @@
 ## 2026-11-16 (mask plots)
 
 - Added `paths.MASK_PLOT_DIR` (`result/mask`); `save_inspection_plots` defaults there when `outdir` is omitted.
+
+## 2026-11-16 (detect pipeline)
+
+- Organized detect code under `pipeline/detect/`: `config`, `background`, `segment`, `catalogue`, `synthetic`, `pipeline`, `psf`, `validation`, `plots`, `cli`.
+- Added `detect.py` / `python -m pipeline.detect`; outputs default to `result/detect/` (`paths.DETECT_RESULT_DIR`).
+- Moved synthetic tests to `tests/test_detect_synthetic.py`; added `pytest` to requirements.
+- Removed duplicate root copies (`run_detect.py`, `*(2).py`, etc.).
+
+## 2026-11-16 (photometry pipeline)
+
+- Split `photometry.py` into `pipeline/photometry/`: `config`, `inputs`, `aperture`, `calibration`, `correlation`, `cog`, `synthetic`, `injection`, `plots`, `io`, `pipeline`, `selftest`, `cli`.
+- Root `photometry.py` is a thin wrapper; outputs default to `result/photometry/`.
+- Added `tests/test_photometry_selftest.py`.

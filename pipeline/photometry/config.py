@@ -1,0 +1,26 @@
+"""Default parameters for aperture photometry (lab B2 §5.4–5.6)."""
+
+import numpy as np
+
+R_AP = 6.0
+R_IN = 15.0
+R_OUT = 25.0
+R_OUT_STEP = 10.0
+R_OUT_MAX = 55.0
+MIN_SKY_PIX = 60
+SEG_GROW = 8
+SKY_CLIP_SIGMA = 3.0
+NEIGHBOUR_FLAG_FRAC = 0.10
+
+COG_RADII = np.arange(1.0, 26.0, 1.0)
+COG_R_TOTAL = 20.0
+N_EMPTY_APERTURES = 3000
+CORR_ESTIMATOR = "robust"
+
+DEFAULT_GAIN = 3.1
+
+FLAG_MASKED = 1
+FLAG_NEIGHBOUR = 2
+FLAG_SKY = 4
+FLAG_NONPOSITIVE = 8
+FLAG_EDGE = 16

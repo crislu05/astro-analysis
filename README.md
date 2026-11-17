@@ -4,47 +4,79 @@ Year 3 lab cycle 2 astro image processing.
 
 ## Layout
 
-FITS inputs live next to this repo, not inside it:
-
 ```text
 astro/
-  astro-analysis/   # this repository
-  data/             # e.g. mosaic.fits (local only)
+  astro-analysis/     # this repository
+  data/               # mosaic.fits (local only)
+
+astro-analysis/
+  pipeline/
+    mask/             # artefact masking
+    detect/           # source detection + validation
+    photometry/       # aperture photometry + calibration
+  tests/              # pytest (synthetic detect + photometry tests)
+  mask.py             # run mask CLI
+  detect.py           # run detect + validation CLI
+  photometry.py       # run photometry CLI
+  result/             # gitignored outputs
+      mask/
+      detect/
+      photometry/
 ```
 
-Pipeline outputs go under `astro-analysis/result/` (gitignored). Mask inspection PNGs and `summary.json` go to `result/mask/` (`paths.MASK_PLOT_DIR`). Default input: `../data/mosaic.fits` (`paths.DEFAULT_MOSAIC`).
+FITS default: `../data/mosaic.fits` (`paths.DEFAULT_MOSAIC`).
 
-## Run the mask pipeline
+## Mask pipeline
 
-From the **repository root** (`astro-analysis/`), with the venv activated:
+From the repo root with venv activated:
 
 ```powershell
-cd D:\astro\astro-analysis
-.\.venv\Scripts\Activate.ps1
 python mask.py
-```
-
-Equivalent:
-
-```powershell
 python -m pipeline.mask
 ```
 
-Optional arguments:
+Outputs: `result/mask/` (PNGs + `summary.json`).
+
+## Detect pipeline
 
 ```powershell
-python mask.py D:\astro\data\mosaic.fits
-python mask.py --no-plots          # mask only, no PNGs
-python mask.py -o result\mask      # custom output directory
+python detect.py
+python -m pipeline.detect
 ```
 
-**Do not** run `pipeline/mask/pipeline.py` directly. That file is the mask *builder* module; Python treats the name `pipeline` as the script, so package imports fail.
+Outputs: `result/detect/` — `catalogue.ecsv`, `segmentation.fits`, `validation.json`, validation PNGs.
 
-Programmatic use:
+```powershell
+python detect.py D:\astro\data\mosaic.fits -o result\detect
+```
+
+## Photometry pipeline
+
+Uses `result/detect/catalogue.ecsv` and `segmentation.fits` by default; rebuilds the mask from the mosaic unless you pass a mask file.
+
+```powershell
+python photometry.py --selftest
+python photometry.py
+python -m pipeline.photometry
+python photometry.py --validate    # also run PSF injection checks (slow)
+```
+
+Outputs: `result/photometry/` — `photometry.ecsv`, `photometry_summary.json`, `photometry_diagnostics.png`.
+
+## Tests
+
+```powershell
+python -m pytest tests/ -v
+```
+
+Do **not** run `pipeline/mask/pipeline.py` or `pipeline/detect/pipeline.py` as scripts (name clashes with the `pipeline` package).
+
+## Programmatic use
 
 ```python
-from pathlib import Path
-from pipeline.mask.io import run_mosaic_mask
+from pipeline.mask import build_mask_state
+from pipeline.detect import detect
 
-mask, state = run_mosaic_mask(Path("../data/mosaic.fits"))
+state = build_mask_state(data, header)
+result = detect(state.data, state.mask, gain=3.1)
 ```
