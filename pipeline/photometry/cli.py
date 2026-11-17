@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from paths import DEFAULT_MOSAIC, DETECT_RESULT_DIR, PHOTOMETRY_RESULT_DIR
+from paths import DETECT_RESULT_DIR, PHOTOMETRY_RESULT_DIR, default_mosaic_path
 from pipeline.photometry.io import load_detection_inputs, load_mask
 from pipeline.photometry.inputs import PhotometryInputs
 from pipeline.photometry.pipeline import run_photometry_catalogue
@@ -20,8 +20,8 @@ def main(argv: list[str] | None = None) -> None:
         "mosaic",
         nargs="?",
         type=Path,
-        default=DEFAULT_MOSAIC,
-        help=f"FITS mosaic (default: {DEFAULT_MOSAIC})",
+        default=None,
+        help=f"FITS mosaic (default: {default_mosaic_path()})",
     )
     parser.add_argument(
         "catalogue",
@@ -60,6 +60,8 @@ def main(argv: list[str] | None = None) -> None:
     if args.selftest:
         selftest()
         return
+
+    args.mosaic = args.mosaic or default_mosaic_path()
 
     for label, path in (
         ("mosaic", args.mosaic),

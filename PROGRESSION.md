@@ -40,3 +40,20 @@
 - Split `photometry.py` into `pipeline/photometry/`: `config`, `inputs`, `aperture`, `calibration`, `correlation`, `cog`, `synthetic`, `injection`, `plots`, `io`, `pipeline`, `selftest`, `cli`.
 - Root `photometry.py` is a thin wrapper; outputs default to `result/photometry/`.
 - Added `tests/test_photometry_selftest.py`.
+
+## 2026-11-17 (calibration CLI)
+
+- Added `paths.default_mosaic_path()` (checks `../data/mosaic.fits` then sibling `mosaic.fits`), `DEFAULT_SDSS_STARS`, `CALIBRATE_RESULT_DIR`.
+- Mask/detect/photometry CLIs use `default_mosaic_path()` when mosaic argument is omitted.
+- Initial `claude_iter/Calibrate.py` wiring (later moved to `pipeline/calibrate/`).
+- Restored positional `out_dir` (7th argument) on `calibrate.py`; `-o` overrides it.
+- `paths.default_sdss_stars_path()` picks `data/Skyserver*.csv` under the repo or sibling `../data/`.
+
+## 2026-11-17 (calibrate package)
+
+- Moved B2 calibration from `claude_iter/Calibrate.py` into `pipeline/calibrate/` (`config`, `zeropoint`, `injection`, `zones`, `stats`, `plots`, `pipeline`, `cli`).
+- Root `calibrate.py` and `python -m pipeline.calibrate` mirror mask/detect/photometry entrypoints; removed `claude_iter/`.
+
+## 2026-11-17 (.gitignore)
+
+- Ignore `.venv/`, `data/`, `*.fits`, `out_full/`, Python caches, and common OS/IDE junk (keep `result/` ignored).

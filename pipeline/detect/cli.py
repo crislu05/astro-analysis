@@ -13,7 +13,7 @@ matplotlib.use("Agg")
 import numpy as np
 from astropy.io import fits
 
-from paths import DEFAULT_MOSAIC, DETECT_RESULT_DIR
+from paths import DETECT_RESULT_DIR, default_mosaic_path
 from pipeline.detect import config as dconfig
 from pipeline.detect import detect
 from pipeline.detect.plots import save_validation_plots
@@ -118,8 +118,8 @@ def main(argv: list[str] | None = None) -> None:
         "mosaic",
         nargs="?",
         type=Path,
-        default=DEFAULT_MOSAIC,
-        help=f"Input FITS (default: {DEFAULT_MOSAIC})",
+        default=None,
+        help=f"Input FITS (default: {default_mosaic_path()})",
     )
     parser.add_argument(
         "-o",
@@ -129,6 +129,7 @@ def main(argv: list[str] | None = None) -> None:
         help=f"Output directory (default: {DETECT_RESULT_DIR})",
     )
     args = parser.parse_args(argv)
+    args.mosaic = args.mosaic or default_mosaic_path()
     if not args.mosaic.is_file():
         raise SystemExit(f"mosaic not found: {args.mosaic}")
     run_detect_validation(args.mosaic, args.outdir)

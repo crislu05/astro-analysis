@@ -6,7 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
-from paths import DEFAULT_MOSAIC, MASK_PLOT_DIR
+from paths import MASK_PLOT_DIR, default_mosaic_path
 from pipeline.mask.config import LAYER_NAMES
 from pipeline.mask.io import run_mosaic_mask
 from pipeline.mask.plots import save_inspection_plots
@@ -43,8 +43,8 @@ def main(argv: list[str] | None = None) -> None:
         "mosaic",
         nargs="?",
         type=Path,
-        default=DEFAULT_MOSAIC,
-        help=f"Input FITS (default: {DEFAULT_MOSAIC})",
+        default=None,
+        help=f"Input FITS (default: {default_mosaic_path()})",
     )
     parser.add_argument(
         "-o",
@@ -59,6 +59,7 @@ def main(argv: list[str] | None = None) -> None:
         help="Skip PNG inspection figures",
     )
     args = parser.parse_args(argv)
+    args.mosaic = args.mosaic or default_mosaic_path()
 
     if not args.mosaic.is_file():
         raise SystemExit(f"mosaic not found: {args.mosaic}")

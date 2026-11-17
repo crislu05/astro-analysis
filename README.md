@@ -13,15 +13,18 @@ astro-analysis/
   pipeline/
     mask/             # artefact masking
     detect/           # source detection + validation
-    photometry/       # aperture photometry + calibration
+    photometry/       # aperture photometry
+    calibrate/        # SDSS zero point + galaxy calibration
   tests/              # pytest (synthetic detect + photometry tests)
   mask.py             # run mask CLI
   detect.py           # run detect + validation CLI
   photometry.py       # run photometry CLI
+  calibrate.py        # run photometric calibration CLI
   result/             # gitignored outputs
       mask/
       detect/
       photometry/
+      calibrate/
 ```
 
 FITS default: `../data/mosaic.fits` (`paths.DEFAULT_MOSAIC`).
@@ -63,13 +66,25 @@ python photometry.py --validate    # also run PSF injection checks (slow)
 
 Outputs: `result/photometry/` — `photometry.ecsv`, `photometry_summary.json`, `photometry_diagnostics.png`.
 
+## Calibrate pipeline
+
+Uses detect + photometry outputs and an SDSS star CSV from `data/` (SkyServer export).
+
+```powershell
+python calibrate.py
+python calibrate.py --quick
+python -m pipeline.calibrate
+```
+
+Outputs: `result/calibrate/` — `calibrated_catalogue.ecsv`, `completeness_galaxies.ecsv`, `magnitude_transfer.ecsv`, `calibration_summary.json`, diagnostic PNGs.
+
 ## Tests
 
 ```powershell
 python -m pytest tests/ -v
 ```
 
-Do **not** run `pipeline/mask/pipeline.py` or `pipeline/detect/pipeline.py` as scripts (name clashes with the `pipeline` package).
+Do **not** run `pipeline/mask/pipeline.py`, `pipeline/detect/pipeline.py`, or `pipeline/calibrate/pipeline.py` as scripts (name clashes with the `pipeline` package).
 
 ## Programmatic use
 
