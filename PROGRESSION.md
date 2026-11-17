@@ -57,3 +57,14 @@
 ## 2026-11-17 (.gitignore)
 
 - Ignore `.venv/`, `data/`, `*.fits`, `out_full/`, Python caches, and common OS/IDE junk (keep `result/` ignored).
+
+## 2026-11-17 (classifier package)
+
+- Moved `star_galaxy.py` into `pipeline/classifier/` (`config`, `measure`, `locus`, `classify`, `star_counts`, `plots`, `pipeline`, `cli`).
+- Added `paths.CLASSIFIER_RESULT_DIR`, root `classifier.py`, and `python -m pipeline.classifier`.
+
+## 2026-11-17 (number counts package)
+
+- Refactored `number_counts.py` into `pipeline/counts/` (`config`, `zones`, `completeness`, `fitting`, `plots`, `pipeline`, `cli`).
+- `paths.NUMBER_COUNTS_RESULT_DIR`; root `number_counts.py` and `python -m pipeline.counts` entrypoints.
+- Reuses `pipeline.classifier.zones.zone_of` and `pipeline.calibrate.config.MATCH_RADIUS`.

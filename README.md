@@ -15,16 +15,21 @@ astro-analysis/
     detect/           # source detection + validation
     photometry/       # aperture photometry
     calibrate/        # SDSS zero point + galaxy calibration
+    classifier/       # star/galaxy separation
+    counts/           # differential galaxy number counts
   tests/              # pytest (synthetic detect + photometry tests)
   mask.py             # run mask CLI
   detect.py           # run detect + validation CLI
   photometry.py       # run photometry CLI
   calibrate.py        # run photometric calibration CLI
+  classifier.py       # run star/galaxy classifier CLI
   result/             # gitignored outputs
       mask/
       detect/
       photometry/
       calibrate/
+      classifier/
+      number_counts/
 ```
 
 FITS default: `../data/mosaic.fits` (`paths.DEFAULT_MOSAIC`).
@@ -78,13 +83,37 @@ python -m pipeline.calibrate
 
 Outputs: `result/calibrate/` — `calibrated_catalogue.ecsv`, `completeness_galaxies.ecsv`, `magnitude_transfer.ecsv`, `calibration_summary.json`, diagnostic PNGs.
 
+## Classifier pipeline
+
+Uses `result/calibrate/calibrated_catalogue.ecsv` (needs `r_point`), segmentation, and SDSS stars.
+
+```powershell
+python classifier.py
+python -m pipeline.classifier
+python classifier.py --sdss-galaxies data/galaxies.csv
+```
+
+Outputs: `result/classifier/` — `classified_catalogue.ecsv`, `star_count_model.ecsv`, `stellar_locus.ecsv`, `star_galaxy_summary.json`, `star_galaxy.png`.
+
+## Number counts
+
+Uses classified catalogue, calibrate completeness, and classifier star-count model.
+
+```powershell
+python number_counts.py
+python -m pipeline.counts
+python number_counts.py --transfer result/calibrate/magnitude_transfer.ecsv
+```
+
+Outputs: `result/number_counts/` — `number_counts.ecsv`, `number_counts_fit.json`, `number_counts.png`.
+
 ## Tests
 
 ```powershell
 python -m pytest tests/ -v
 ```
 
-Do **not** run `pipeline/mask/pipeline.py`, `pipeline/detect/pipeline.py`, or `pipeline/calibrate/pipeline.py` as scripts (name clashes with the `pipeline` package).
+Do **not** run `pipeline/mask/pipeline.py`, `pipeline/detect/pipeline.py`, `pipeline/calibrate/pipeline.py`, `pipeline/classifier/pipeline.py`, or `pipeline/counts/pipeline.py` as scripts (name clashes with the `pipeline` package).
 
 ## Programmatic use
 

@@ -15,6 +15,8 @@ PHOTOMETRY_RESULT_DIR = RESULT_DIR / "photometry"
 DEFAULT_MOSAIC = DATA_DIR / "mosaic.fits"
 DEFAULT_SDSS_STARS = DATA_DIR / "sdss_stars.csv"
 CALIBRATE_RESULT_DIR = RESULT_DIR / "calibrate"
+CLASSIFIER_RESULT_DIR = RESULT_DIR / "classifier"
+NUMBER_COUNTS_RESULT_DIR = RESULT_DIR / "number_counts"
 
 
 def default_mosaic_path() -> Path:
