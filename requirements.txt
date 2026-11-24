@@ -4,4 +4,5 @@ photutils >= 1.11
 matplotlib >= 3.8
 scipy >= 1.11
 pytest >= 8.0
+astroquery >= 0.4.11
 

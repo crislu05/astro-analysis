@@ -41,6 +41,27 @@
 - Root `photometry.py` is a thin wrapper; outputs default to `result/photometry/`.
 - Added `tests/test_photometry_selftest.py`.
 
+## 2026-11-24 (Metcalfe cosmology)
+
+- Refactored `metcalfe/cosmology/cosmology.py` into `config`, `core`, `reference`, `validate`, `summary`, `plots`, `cli`.
+- Entrypoints: `metcalfe_cosmology.py`, `python -m metcalfe.cosmology`; figure under `result/metcalfe/`.
+- Added `tests/test_metcalfe_cosmology.py`.
+
+## 2026-11-24 (Metcalfe luminosity)
+
+- Refactored `metcalfe/luminosity/luminosity.py` into `gamma`, `schechter`, `presets`, `fit`, `counts`, `validate`, `summary`, `cli`.
+- Entrypoints: `metcalfe_luminosity.py`, `python -m metcalfe.luminosity`; uses `metcalfe.cosmology` for convergence checks.
+- Added `tests/test_metcalfe_luminosity.py`.
+
+## 2026-11-24 (Metcalfe stellar population)
+
+- Refactored Component C into `metcalfe/stella_population/`: `ised`, `sfr`, `photometry`, `validate`, `data_paths`, `cli`.
+- Entrypoints: `metcalfe_stella_population.py`; BC95 data expected in `data/bc95/`.
+- Added `tests/test_metcalfe_stella_population.py` (skipped until data present).
+- Moved BC95 `.ised`, `FILTERBIN.RES`, and readme PDF to `data/bc95/`.
+- Read `FILTERBIN.RES` with csp.f FILTER0 layout (`nf`, `np(100)`, `r(250,100,2)`).
+- Added sections 8–9 validation: B–V/V–K vs `.1color`, τ from photographic b–r, K+E grid (53 checks pass).
+
 ## 2026-11-17 (calibration CLI)
 
 - Added `paths.default_mosaic_path()` (checks `../data/mosaic.fits` then sibling `mosaic.fits`), `DEFAULT_SDSS_STARS`, `CALIBRATE_RESULT_DIR`.

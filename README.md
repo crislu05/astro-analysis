@@ -17,6 +17,7 @@ astro-analysis/
     calibrate/        # SDSS zero point + galaxy calibration
     classifier/       # star/galaxy separation
     counts/           # differential galaxy number counts
+  metcalfe/           # Metcalfe (2001) count model checks (cosmology, …)
   tests/              # pytest (synthetic detect + photometry tests)
   mask.py             # run mask CLI
   detect.py           # run detect + validation CLI
@@ -30,6 +31,7 @@ astro-analysis/
       calibrate/
       classifier/
       number_counts/
+      metcalfe/
 ```
 
 FITS default: `../data/mosaic.fits` (`paths.DEFAULT_MOSAIC`).
@@ -106,6 +108,37 @@ python number_counts.py --transfer result/calibrate/magnitude_transfer.ecsv
 ```
 
 Outputs: `result/number_counts/` — `number_counts.ecsv`, `number_counts_fit.json`, `number_counts.png`.
+
+## Metcalfe stellar population (Component C)
+
+BC95 `.ised` SSP files (not in git). See `data/bc95/README.md`.
+
+```powershell
+python metcalfe_stella_population.py --show-data-help
+python metcalfe_stella_population.py
+python -m metcalfe.stella_population
+```
+
+## Metcalfe luminosity (Component B)
+
+Five Schechter LFs, h rescaling, normalisation fit A, validation suite.
+
+```powershell
+python metcalfe_luminosity.py
+python -m metcalfe.luminosity
+```
+
+## Metcalfe cosmology (Component A)
+
+Legacy vs Planck cosmologies, validation suite, and proposal Figure 2.
+
+```powershell
+python metcalfe_cosmology.py
+python -m metcalfe.cosmology
+python metcalfe_cosmology.py --validate-only
+```
+
+Outputs: `result/metcalfe/component_a_cosmology.png` (and validation printed to the console).
 
 ## Tests
 

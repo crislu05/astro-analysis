@@ -2,8 +2,10 @@
 result/
 out_full/
 
-# Local data (FITS, SkyServer CSV, downloads — not versioned)
-data/
+# Local data (FITS, BC95 binaries, downloads — not versioned)
+data/**
+!data/**/
+!data/**/README.md
 
 # Python
 .venv/
