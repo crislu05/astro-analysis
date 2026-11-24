@@ -16,6 +16,7 @@ Then run:
 
 ```powershell
 python metcalfe_stella_population.py
+python metcalfe_component_c_fit.py
 ```
 
-Alternate location: `../data/bc95/` (sibling of `astro-analysis`, same as `mosaic.fits`).
+Alternate location: `../data/bc95/` (sibling of `astro-analysis`, same as `mosaic_r.fits`).

@@ -13,7 +13,7 @@ matplotlib.use("Agg")
 import numpy as np
 from astropy.io import fits
 
-from paths import DETECT_RESULT_DIR, default_mosaic_path
+from paths import default_mosaic_path, fits_product_path, pipeline_result_dir
 from pipeline.detect import config as dconfig
 from pipeline.detect import detect
 from pipeline.detect.plots import save_validation_plots
@@ -65,7 +65,9 @@ def run_detect_validation(mosaic: Path, outdir: Path) -> None:
         if res.segmentation.segm is not None
         else np.zeros(data.shape, dtype=np.int32)
     )
-    fits.PrimaryHDU(seg_data).writeto(outdir / "segmentation.fits", overwrite=True)
+    seg_path = fits_product_path(outdir / "segmentation.fits")
+    fits.PrimaryHDU(seg_data).writeto(seg_path, overwrite=True)
+    (outdir / "segmentation.fits.path").write_text(str(seg_path.resolve()) + "\n", encoding="utf-8")
     n_real = len(cat)
     results["detection"] = detection_summary(res, area_deg2, good_px)
     log(f"detected {n_real} sources")
@@ -125,14 +127,16 @@ def main(argv: list[str] | None = None) -> None:
         "-o",
         "--outdir",
         type=Path,
-        default=DETECT_RESULT_DIR,
-        help=f"Output directory (default: {DETECT_RESULT_DIR})",
+        default=None,
+        help="Output directory (default: result/detect/<band> from mosaic filename)",
     )
     args = parser.parse_args(argv)
     args.mosaic = args.mosaic or default_mosaic_path()
     if not args.mosaic.is_file():
         raise SystemExit(f"mosaic not found: {args.mosaic}")
-    run_detect_validation(args.mosaic, args.outdir)
+    outdir = args.outdir or pipeline_result_dir("detect", args.mosaic)
+    print(f"Output: {outdir}")
+    run_detect_validation(args.mosaic, outdir)
 
 
 if __name__ == "__main__":

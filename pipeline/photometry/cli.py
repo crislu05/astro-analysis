@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from paths import DETECT_RESULT_DIR, PHOTOMETRY_RESULT_DIR, default_mosaic_path
+from paths import default_mosaic_path, default_segmentation_path, pipeline_result_dir
 from pipeline.photometry.io import load_detection_inputs, load_mask
 from pipeline.photometry.inputs import PhotometryInputs
 from pipeline.photometry.pipeline import run_photometry_catalogue
@@ -27,13 +27,13 @@ def main(argv: list[str] | None = None) -> None:
         "catalogue",
         nargs="?",
         type=Path,
-        default=DETECT_RESULT_DIR / "catalogue.ecsv",
+        default=None,
     )
     parser.add_argument(
         "segmentation",
         nargs="?",
         type=Path,
-        default=DETECT_RESULT_DIR / "segmentation.fits",
+        default=None,
     )
     parser.add_argument(
         "mask",
@@ -46,8 +46,8 @@ def main(argv: list[str] | None = None) -> None:
         "-o",
         "--outdir",
         type=Path,
-        default=PHOTOMETRY_RESULT_DIR,
-        help=f"Output directory (default: {PHOTOMETRY_RESULT_DIR})",
+        default=None,
+        help="Output directory (default: result/photometry/<band>)",
     )
     parser.add_argument("--selftest", action="store_true", help="run synthetic self-tests")
     parser.add_argument(
@@ -62,6 +62,10 @@ def main(argv: list[str] | None = None) -> None:
         return
 
     args.mosaic = args.mosaic or default_mosaic_path()
+    detect_dir = pipeline_result_dir("detect", args.mosaic)
+    args.catalogue = args.catalogue or (detect_dir / "catalogue.ecsv")
+    args.segmentation = args.segmentation or default_segmentation_path(detect_dir)
+    args.outdir = args.outdir or pipeline_result_dir("photometry", args.mosaic)
 
     for label, path in (
         ("mosaic", args.mosaic),

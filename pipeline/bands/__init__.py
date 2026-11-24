@@ -1,0 +1,1 @@
+"""Resample multi-band SWIRE tiles onto the lab mosaic grid."""

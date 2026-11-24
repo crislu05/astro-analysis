@@ -13,7 +13,7 @@ from metcalfe.stella_population.validate import run_validation
 def main(argv: list[str] | None = None) -> None:
     defaults = default_bc95_paths()
     parser = argparse.ArgumentParser(
-        description="Metcalfe Component C: BC95 SSP reader and exponential SFR spectra.",
+        description="BC95 SSP reader validation (sections 1–9; tau/colour tables). For C2–C6 tau fit use metcalfe_component_c_fit.py.",
     )
     parser.add_argument("--data-dir", type=Path, help="folder containing BC95 .ised files")
     parser.add_argument("--ssp", type=Path, default=defaults.ssp_ised)

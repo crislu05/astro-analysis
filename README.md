@@ -7,13 +7,14 @@ Year 3 lab cycle 2 astro image processing.
 ```text
 astro/
   astro-analysis/     # this repository
-  data/               # mosaic.fits (local only)
+  data/               # mosaic_r.fits + other bands (local only)
 
 astro-analysis/
   pipeline/
     mask/             # artefact masking
     detect/           # source detection + validation
     photometry/       # aperture photometry
+    bands/            # cut multi-band SWIRE tiles onto the lab grid
     calibrate/        # SDSS zero point + galaxy calibration
     classifier/       # star/galaxy separation
     counts/           # differential galaxy number counts
@@ -22,6 +23,7 @@ astro-analysis/
   mask.py             # run mask CLI
   detect.py           # run detect + validation CLI
   photometry.py       # run photometry CLI
+  bands.py            # extract i, U, g mosaics onto lab grid
   calibrate.py        # run photometric calibration CLI
   classifier.py       # run star/galaxy classifier CLI
   result/             # gitignored outputs
@@ -34,7 +36,7 @@ astro-analysis/
       metcalfe/
 ```
 
-FITS default: `../data/mosaic.fits` (`paths.DEFAULT_MOSAIC`).
+FITS default: `../data/mosaic_r.fits` (`paths.default_mosaic_path()`; accepts legacy `mosaic.fits`).
 
 ## Mask pipeline
 
@@ -47,6 +49,19 @@ python -m pipeline.mask
 
 Outputs: `result/mask/` (PNGs + `summary.json`).
 
+## Multi-band mosaics
+
+Put the lab **r** mosaic as `data/mosaic_r.fits` and the SWIRE archive tiles in the **same folder**. Extraction writes `mosaic_i.fits`, `mosaic_u.fits`, `mosaic_g.fits` on the **same** WCS and header layout (any band file works with mask, detect, photometry):
+
+```powershell
+python bands.py
+python -m pipeline.bands
+python mask.py data/mosaic_g.fits
+python detect.py D:\astro\data\mosaic_g.fits
+```
+
+All **FITS** (mosaics, segmentation, band coverage) live under **`../data/`**. JSON/ECSV/PNGs stay in **`result/`** (e.g. `result/bands/extraction_report.json`).
+
 ## Detect pipeline
 
 ```powershell
@@ -54,15 +69,15 @@ python detect.py
 python -m pipeline.detect
 ```
 
-Outputs: `result/detect/` — `catalogue.ecsv`, `segmentation.fits`, `validation.json`, validation PNGs.
+Outputs: `result/detect/<band>/` (e.g. `r`, `i`, `U`, `g`) — `catalogue.ecsv`, `validation.json`, PNGs; segmentation FITS → `../data/pipeline/result/detect/<band>/`.
 
 ```powershell
-python detect.py D:\astro\data\mosaic.fits -o result\detect
+python detect.py D:\astro\data\mosaic_r.fits -o result\detect
 ```
 
 ## Photometry pipeline
 
-Uses `result/detect/catalogue.ecsv` and `segmentation.fits` by default; rebuilds the mask from the mosaic unless you pass a mask file.
+Uses matching `result/detect/<band>/` products by default; rebuilds the mask from the mosaic unless you pass a mask file.
 
 ```powershell
 python photometry.py --selftest
@@ -113,11 +128,25 @@ Outputs: `result/number_counts/` — `number_counts.ecsv`, `number_counts_fit.js
 
 BC95 `.ised` SSP files (not in git). See `data/bc95/README.md`.
 
+**BC95 reader validation** (SSP, filters, photometry checks):
+
 ```powershell
 python metcalfe_stella_population.py --show-data-help
 python metcalfe_stella_population.py
 python -m metcalfe.stella_population
 ```
+
+**C2–C6** (tau fit, legacy regression, [K+E] grids):
+
+```powershell
+python metcalfe_component_c_fit.py --selftest
+python metcalfe_component_c_fit.py
+python -m metcalfe.stella_population.component_c
+```
+
+Package layout: `metcalfe/stella_population/` (reader, `validate.py`) and `metcalfe/stella_population/component_c/` (tau, K+E, `run.py`).
+
+Outputs: `result/metcalfe/component_c_tau.json`, `component_c_kegrid.npz`, `component_c_evolution.png`.
 
 ## Metcalfe luminosity (Component B)
 

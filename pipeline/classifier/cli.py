@@ -6,11 +6,10 @@ import argparse
 from pathlib import Path
 
 from paths import (
-    CALIBRATE_RESULT_DIR,
-    CLASSIFIER_RESULT_DIR,
-    DETECT_RESULT_DIR,
     default_mosaic_path,
     default_sdss_stars_path,
+    default_segmentation_path,
+    pipeline_result_dir,
 )
 from pipeline.classifier.pipeline import run_classifier
 
@@ -38,14 +37,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "catalogue",
         nargs="?",
         type=Path,
-        default=CALIBRATE_RESULT_DIR / "calibrated_catalogue.ecsv",
-        help="calibrated catalogue with r_point (default: result/calibrate/...)",
+        default=None,
+        help="calibrated catalogue with r_point (default: result/calibrate/<band>/...)",
     )
     p.add_argument(
         "segmentation",
         nargs="?",
         type=Path,
-        default=DETECT_RESULT_DIR / "segmentation.fits",
+        default=None,
     )
     p.add_argument(
         "mask",
@@ -67,7 +66,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         type=Path,
         default=None,
         metavar="out_dir",
-        help=f"Output directory (default: {CLASSIFIER_RESULT_DIR})",
+        help="Output directory (default: result/classifier/<band>)",
     )
     p.add_argument("-o", "--outdir", type=Path, default=None, help="output directory")
     p.add_argument(
@@ -76,19 +75,24 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default=None,
         help="optional SDSS galaxy table for purity check",
     )
-    args = p.parse_args(argv)
-    if args.outdir is not None:
-        args.out_dir = args.outdir
-    elif args.out_dir is None:
-        args.out_dir = CLASSIFIER_RESULT_DIR
-    return args
+    return p.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> None:
     args = parse_args(argv)
+    mosaic = args.mosaic or default_mosaic_path()
+    detect_dir = pipeline_result_dir("detect", mosaic)
+    args.catalogue = args.catalogue or (
+        pipeline_result_dir("calibrate", mosaic) / "calibrated_catalogue.ecsv"
+    )
+    args.segmentation = args.segmentation or default_segmentation_path(detect_dir)
+    if args.outdir is not None:
+        args.out_dir = args.outdir
+    elif args.out_dir is None:
+        args.out_dir = pipeline_result_dir("classifier", mosaic)
     galaxies = _require_file(args.sdss_galaxies, "SDSS galaxies") if args.sdss_galaxies else None
     run_classifier(
-        _require_file(args.mosaic or default_mosaic_path(), "mosaic"),
+        _require_file(mosaic, "mosaic"),
         _require_file(args.catalogue, "catalogue (run calibrate.py first)"),
         _require_file(args.segmentation, "segmentation"),
         _require_file(args.sdss_stars or default_sdss_stars_path(), "SDSS stars CSV"),

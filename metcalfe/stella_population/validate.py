@@ -20,6 +20,7 @@ from metcalfe.stella_population.photometry import (
     vega_colour,
     vega_magnitude,
 )
+from metcalfe.stella_population.report import Report
 from metcalfe.stella_population.sfr import (
     bc95_trapezoid_convolution,
     exponential_sfr_mass_formed,
@@ -27,27 +28,6 @@ from metcalfe.stella_population.sfr import (
 )
 
 BC95_PHOTON_COUNTING = False
-
-
-class Report:
-    def __init__(self):
-        self.number_passed = 0
-        self.number_failed = 0
-
-    def check(self, label, value, target, tolerance, unit=""):
-        passed = abs(value - target) <= tolerance
-        print(
-            f"  [{'PASS' if passed else 'FAIL'}] {label}: got {value:.6g}{unit}, "
-            f"expected {target:.6g}{unit} +/- {tolerance:.2g}"
-        )
-        self.number_passed += passed
-        self.number_failed += not passed
-        return passed
-
-    def check_true(self, label, condition):
-        print(f"  [{'PASS' if condition else 'FAIL'}] {label}")
-        self.number_passed += bool(condition)
-        self.number_failed += not condition
 
 
 def run_validation(paths: BC95Paths) -> bool:

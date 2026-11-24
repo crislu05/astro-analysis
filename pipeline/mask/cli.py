@@ -6,7 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
-from paths import MASK_PLOT_DIR, default_mosaic_path
+from paths import default_mosaic_path, pipeline_result_dir
 from pipeline.mask.config import LAYER_NAMES
 from pipeline.mask.io import run_mosaic_mask
 from pipeline.mask.plots import save_inspection_plots
@@ -50,8 +50,8 @@ def main(argv: list[str] | None = None) -> None:
         "-o",
         "--outdir",
         type=Path,
-        default=MASK_PLOT_DIR,
-        help=f"Inspection plots and summary.json (default: {MASK_PLOT_DIR})",
+        default=None,
+        help="Inspection plots and summary.json (default: result/mask/<band>)",
     )
     parser.add_argument(
         "--no-plots",
@@ -75,7 +75,8 @@ def main(argv: list[str] | None = None) -> None:
     if args.no_plots:
         return
 
-    outdir = save_inspection_plots(state, args.outdir)
+    plot_dir = args.outdir or pipeline_result_dir("mask", args.mosaic)
+    outdir = save_inspection_plots(state, plot_dir)
     summary = write_summary(state, args.mosaic, outdir)
     print(f"Wrote plots to {outdir}")
     print(f"Wrote {summary.name}")

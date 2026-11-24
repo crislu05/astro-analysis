@@ -53,10 +53,22 @@
 - Entrypoints: `metcalfe_luminosity.py`, `python -m metcalfe.luminosity`; uses `metcalfe.cosmology` for convergence checks.
 - Added `tests/test_metcalfe_luminosity.py`.
 
+## 2026-11-24 (multi-band extraction)
+
+- Refactored `pipeline/bands/bands.py` into `config`, `io`, `resample`, `registration`, `headers`, `pipeline`, `cli`.
+- Paths: SWIRE tiles beside `mosaic_r.fits` (`paths.mosaic_data_dir`); outputs `mosaic_{band}.fits` there too.
+- Lab r-band FITS: prefer `mosaic_r.fits` over legacy `mosaic.fits` (`paths.LAB_MOSAIC_FILENAMES`).
+- Bands extract: lab file is r; WCS fit uses archive colour tiles when `*_r_*` tiles are absent (`pipeline/bands/pipeline.py`).
+- Policy: no FITS in repo (`paths.fits_product_path`, `paths.mosaic_product_dir`); `result/` keeps JSON/ECSV/PNG.
+- Per-band results: `paths.pipeline_result_dir(stage, mosaic)` → `result/<stage>/r|i|U|g/`.
+- Root entrypoint `bands.py`; downstream CLIs take any band mosaic as the `mosaic` argument.
+
 ## 2026-11-24 (Metcalfe stellar population)
 
 - Refactored Component C into `metcalfe/stella_population/`: `ised`, `sfr`, `photometry`, `validate`, `data_paths`, `cli`.
-- Entrypoints: `metcalfe_stella_population.py`; BC95 data expected in `data/bc95/`.
+- Added `metcalfe/stella_population/component_c/` (C2–C6: `tau`, `ke_grid`, `run`, `selftest`); entry `metcalfe_component_c_fit.py`.
+- Shared `metcalfe/stella_population/report.py` for PASS/FAIL reporting.
+- Entrypoints: `metcalfe_stella_population.py` (BC95 validation); `metcalfe_component_c_fit.py` (tau/K+E); BC95 in `data/bc95/`.
 - Added `tests/test_metcalfe_stella_population.py` (skipped until data present).
 - Moved BC95 `.ised`, `FILTERBIN.RES`, and readme PDF to `data/bc95/`.
 - Read `FILTERBIN.RES` with csp.f FILTER0 layout (`nf`, `np(100)`, `r(250,100,2)`).
@@ -64,7 +76,7 @@
 
 ## 2026-11-17 (calibration CLI)
 
-- Added `paths.default_mosaic_path()` (checks `../data/mosaic.fits` then sibling `mosaic.fits`), `DEFAULT_SDSS_STARS`, `CALIBRATE_RESULT_DIR`.
+- Added `paths.default_mosaic_path()` (prefers `mosaic_r.fits`, falls back to `mosaic.fits`), `DEFAULT_SDSS_STARS`, `CALIBRATE_RESULT_DIR`.
 - Mask/detect/photometry CLIs use `default_mosaic_path()` when mosaic argument is omitted.
 - Initial `claude_iter/Calibrate.py` wiring (later moved to `pipeline/calibrate/`).
 - Restored positional `out_dir` (7th argument) on `calibrate.py`; `-o` overrides it.
